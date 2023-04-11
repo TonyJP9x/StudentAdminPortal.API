@@ -11,6 +11,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors((options) =>
+{
+    options.AddPolicy("angularApplication", (builder) =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .WithMethods("GET", "POST", "PUT", "DELETE")
+        .WithExposedHeaders("*");
+    });
+});
 var connectionString = builder.Configuration.GetConnectionString("StudentAdminPortalDb");
 builder.Services.AddDbContext<StudentAdminContext>(options =>
 {
@@ -29,6 +39,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("angularApplication");
 
 app.UseAuthorization();
 
