@@ -1,4 +1,4 @@
-﻿namespace StudentAdminPortal.API.DomainModels
+﻿namespace StudentAdminPortal.API.Models
 {
     public class Address
     {

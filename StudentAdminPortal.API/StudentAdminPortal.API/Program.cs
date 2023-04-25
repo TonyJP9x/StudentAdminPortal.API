@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using StudentAdminPortal.API.DataModels;
+using StudentAdminPortal.API.Entities;
 using StudentAdminPortal.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +26,7 @@ builder.Services.AddDbContext<StudentAdminContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
-builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();

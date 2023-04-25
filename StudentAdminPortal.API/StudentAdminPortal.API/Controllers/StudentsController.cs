@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using StudentAdminPortal.API.DomainModels;
+using StudentAdminPortal.API.Models;
 using StudentAdminPortal.API.Repositories;
 
 namespace StudentAdminPortal.API.Controllers
@@ -26,7 +26,7 @@ namespace StudentAdminPortal.API.Controllers
         }
 
         [HttpGet]
-        [Route("{studentId:guid}")]
+        [Route("{studentId:guid}"), ActionName("GetStudentAsync")]
         public async Task<IActionResult> GetStudentAsync([FromRoute] Guid studentId)
         {
             var student = await studentRepository.GetStudentAsync(studentId);
@@ -38,12 +38,12 @@ namespace StudentAdminPortal.API.Controllers
         }
 
         [HttpPut]
-        [Route("{studentId:guid}")]
+        [Route("{studentId:Guid}")]
         public async Task<IActionResult> UpdateStudentAsync([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
         {
            if(await studentRepository.Exists(studentId))
             {
-                var updateStudent = await studentRepository.UpdateStudentAsync(studentId, mapper.Map<DataModels.Student>(request));
+                var updateStudent = await studentRepository.UpdateStudentAsync(studentId, mapper.Map<Entities.Student>(request));
                 if(updateStudent != null)
                 {
                     return Ok(mapper.Map<Student>(updateStudent));
@@ -55,5 +55,26 @@ namespace StudentAdminPortal.API.Controllers
                 return NotFound();
             }
         }
+
+        [HttpDelete]
+        [Route("{studentId:Guid}")]
+        public async Task<IActionResult> DeleteStudentAsync([FromRoute] Guid studentId)
+        {
+            if(await studentRepository.Exists(studentId))
+            {
+                var deleteStudent = await studentRepository.DeleteStudentAsync(studentId);
+                return Ok(mapper.Map<Student>(deleteStudent));
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("newStudent")]
+        public async Task<IActionResult> CreateStudentAsync([FromBody] CreateStudentRequest request)
+        {
+            var newStudent = await studentRepository.CreateStudentAsync(mapper.Map<Entities.Student>(request));
+            return Ok(newStudent);
+           /* return CreatedAtAction(nameof(GetStudentAsync), new {studentId = newStudent.Id }, mapper.Map<Student>(newStudent));*/
+        }   
     }
 }

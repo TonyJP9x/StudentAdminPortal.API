@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
-using StudentAdminPortal.API.DataModels;
+using StudentAdminPortal.API.Entities;
 
 namespace StudentAdminPortal.API.Repositories
 {
-    public class SqlStudentRepository : IStudentRepository
+    public class StudentRepository : IStudentRepository
     {
         private readonly StudentAdminContext context;
 
-        public SqlStudentRepository(StudentAdminContext context)
+        public StudentRepository(StudentAdminContext context)
         {
             this.context = context;
         }
@@ -32,7 +32,7 @@ namespace StudentAdminPortal.API.Repositories
             return await context.Student.AnyAsync(x => x.Id == studentId);
         }
 
-        public async Task<Student> UpdateStudentAsync(Guid studentId, DataModels.Student request)
+        public async Task<Student> UpdateStudentAsync(Guid studentId, Entities.Student request)
         {
             var existingStudent = await GetStudentAsync(studentId);
             if (existingStudent != null)
@@ -52,6 +52,25 @@ namespace StudentAdminPortal.API.Repositories
             }
             return null;
 
+        }
+
+        public  async Task<Student> DeleteStudentAsync(Guid studentId)
+        {
+            var existingStudent = await GetStudentAsync(studentId);
+            if(existingStudent != null)
+            {
+                context.Student.Remove(existingStudent);
+                await context.SaveChangesAsync();
+                return existingStudent;
+            }
+            return null;
+        }
+
+        public async Task<Student> CreateStudentAsync(Student request)
+        {
+            var newStudent =  await context.Student.AddAsync(request);
+            await context.SaveChangesAsync();
+            return newStudent.Entity;
         }
     }
 }
